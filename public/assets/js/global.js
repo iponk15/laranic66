@@ -52,6 +52,7 @@ var global = function () {
     var help_form_validation = function (clas,rules,messages) {
         var warning      = $('.alert-warning', clas);
         var form_confirm = $(clas).attr('data-confirm');
+        var blockUI      = $('#body-ajaxify');
 
         $( clas ).validate({
             // define validation rules
@@ -66,6 +67,7 @@ var global = function () {
             },
 
             submitHandler: function (form) {
+                // KTApp.block(blockUI, {});
                 if(form_confirm == 1){
                     var mess  = "You want edit this data !";
                     var bmess = 'Yes, Edit it!';
@@ -108,6 +110,9 @@ var global = function () {
                     });
 
                 }
+                setTimeout(function() {
+                    KTApp.unblock(blockUI);
+                }, 1000);
 
             }
         });
@@ -214,15 +219,61 @@ var global = function () {
                     }
                 });                         
             } 
-            
-            // {
-            //     title : 'Are you sure?',
-            //     text  : "You won't be able to revert this!",
-            //     type  : 'warning',
-            //     showCancelButton  : true,
-            //     confirmButtonText : 'Yes, delete it!'
-            // }
         });
+    }
+
+    var hlp_select2 = function(clas,url,placeholder,tag,clear) {
+        var Dtag = (typeof tag == "undefined" || tag == false  ? false : true); 
+        var Dpcd = (typeof placeholder == "undefined" ? 'Select Option' : placeholder); 
+        var Dclr = (typeof clear == "undefined" ? false : true);
+
+        if(typeof url == 'undefined' || url == '' || url == null){
+            $(clas).select2({
+                allowClear	 : Dclr,
+                placeholder	 : Dpcd
+            });
+        }else{
+            $(clas).select2({
+                allowClear	 : Dclr,
+                placeholder	 : Dpcd,
+                ajax: {
+                    url 	 : url,
+                    dataType : 'json',
+                    delay	 : 250,
+                    data 	 : function(params) {
+                        return {
+                            q		: params.term, // search term
+                            page 	: params.page
+                        };
+                    },
+                    processResults 	: function(data, params) {
+                        // parse the results into the format expected by Select2
+                        // since we are using custom formatting functions we do not need to
+                        // alter the remote JSON data, except to indicate that infinite
+                        // scrolling can be used
+                        params.page = params.page || 1;
+
+                        return {
+                            results 	: data.items,
+                            pagination 	: {
+                                more: (params.page * 30) < data.total_count
+                            }
+                        };
+                    },
+                    cache: true
+                },
+                tags				: Dtag,
+                tokeSparator		: [','],
+                escapeMarkup		: function(markup) { return markup; }, // let our custom formatter work
+                minimumInputLength	: 1,
+                templateResult		: formatResult, // omitted for brevity, see the source of this page
+                templateSelection	: formatResult // omitted for brevity, see the source of this page
+            });
+        }
+
+        function formatResult(result){
+            return result.text;
+        }
     }
 
     return {
@@ -230,6 +281,7 @@ var global = function () {
         init_form_validation : function (clas,rules,messages) { help_form_validation(clas,rules,messages) },
         init_dtrp		     : function (tipe,clas,prm) { hlp_dtrp(tipe,clas,prm) },
         init_summernote      : function (clas,prm) { hlp_summernote(clas,prm) },
-        init_form_repeater   : function (clas,swalparam,swalResult) { hlp_form_repeater(clas,swalparam,swalResult) }
+        init_form_repeater   : function (clas,swalparam,swalResult) { hlp_form_repeater(clas,swalparam,swalResult) },
+        init_select2	     : function (clas,url,placeholder,tag,clear) { hlp_select2(clas,url,placeholder,tag,clear) }
     }
 }();

@@ -1,11 +1,44 @@
 <!-- Uncomment this to display the close button of the panel -->
+<?php
+    function getMenu(){
+        $data = DB::table('mrt_menus')->selectRaw("menu_id AS id, menu_parent, menu_nama AS name, menu_icon AS icon, menu_link")->orderBy('menu_order', 'asc')->get();
+
+        $itemsByReference = array();
+        /*BEGIN BUILD STRUKTUR DATA*/
+        foreach($data as $key => $item) {
+        $style['style'] = $item->menu_link == '' ? '' : 'text-decoration: underline';
+        $itemsByReference[$item->id] = $item;
+        $itemsByReference[$item->id]->icon = $item->icon == '' ? '' : $item->icon;
+        $itemsByReference[$item->id]->a_attr = $style;
+        $itemsByReference[$item->id]->children = array();
+        $itemsByReference[$item->id]->data = (object)[];
+        }
+
+        /*END BUILD STRUKTUR DATA*/
+
+        /*BEGIN SET GROUP CHILDREN YANG SESUAI DENGAN PARENT*/
+        foreach($data as $key => &$item)
+        if($item->menu_parent && isset($itemsByReference[$item->menu_parent]))
+         $itemsByReference [$item->menu_parent]->children[] = &$item;
+        /*END SET GROUP CHILDREN YANG SESUAI DENGAN PARENT*/
+
+        /*BEGIN HAPUS CHILD YANG TIDAK SESUAI DENGAN PARENT*/
+        foreach($data as $key => &$item) {
+        if($item->menu_parent && isset($itemsByReference[$item->menu_parent]))
+         unset($data[$key]);
+        }
+        /*END HAPUS CHILD YANG TIDAK SESUAI DENGAN PARENT*/
+        // $result = array_values($data);
+        return $result = $data->values();
+    }
+ ?>
 <button class="kt-aside-close " id="kt_aside_close_btn"><i class="la la-close"></i></button>
 <div class="kt-aside  kt-aside--fixed  kt-grid__item kt-grid kt-grid--desktop kt-grid--hor-desktop" id="kt_aside">
 
     <!-- begin:: Aside -->
     <div class="kt-aside__brand kt-grid__item " id="kt_aside_brand" style="background-color: #f2f2f2;">
         <div class="kt-aside__brand-logo">
-            <a href="{{ url('/') }}" class="ajaxify">
+            <a href="" class="ajaxify">
                 <img alt="Logo" width="170" height="150" src="{{ url('assets/media/logos/logo_mrtj.png') }}" />
             </a>
         </div>
@@ -35,365 +68,47 @@
     <!-- begin:: Aside Menu -->
     <div class="kt-aside-menu-wrapper kt-grid__item kt-grid__item--fluid" id="kt_aside_menu_wrapper">
         <div id="kt_aside_menu" class="kt-aside-menu " data-ktmenu-vertical="1" data-ktmenu-scroll="1" data-ktmenu-dropdown-timeout="500">
-        <ul class="kt-menu__nav ">
-                <li class="kt-menu__item  kt-menu__item--active" aria-haspopup="true">
-                    <a href="/" class="kt-menu__link ajaxify">
-                        <span class="kt-menu__link-icon">
-                            <i class="flaticon-diagram"></i>
-                        </span>
-                        <span class="kt-menu__link-text">Dashboard</span>
-                    </a>
-                </li>
-                <li class="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
-                    <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                        <span class="kt-menu__link-icon">
-                            <i class="flaticon-file-2"></i>
-                        </span>
-                        <span class="kt-menu__link-text">Master Data</span>
-                        <i class="kt-menu__ver-arrow la la-angle-right"></i>
-                    </a>
-                    <div class="kt-menu__submenu ">
-                        <span class="kt-menu__arrow"></span>
-                        <ul class="kt-menu__subnav">
-                            <li class="kt-menu__item " aria-haspopup="true">
-                                <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                                    <span class="kt-menu__link-icon">
-                                        <i class="flaticon-customer"></i>
-                                    </span>
-                                    <span class="kt-menu__link-text">Manage Vendors</span>
-                                </a>
-                            </li>
-                            <li class="kt-menu__item " aria-haspopup="true">
-                                <a href="{{ url('/category') }}" class="kt-menu__link kt-menu__toggle ajaxify">
-                                    <span class="kt-menu__link-icon">
-                                        <i class="flaticon-web"></i>
-                                    </span>
-                                    <span class="kt-menu__link-text">Category / Sub Category</span>
-                                </a>
-                            </li>
-                            <li class="kt-menu__item " aria-haspopup="true">
-                                <a href=" {{ url('/venpolicy') }} " class="kt-menu__link kt-menu__toggle ajaxify">
-                                    <span class="kt-menu__link-icon">
-                                        <i class="flaticon-notes"></i>
-                                    </span>
-                                    <span class="kt-menu__link-text">Vendor Policy</span>
-                                </a>
-                            </li>
-                            <li class="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
-                                <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                                    <span class="kt-menu__link-icon">
-                                        <i class="flaticon-interface-6"></i>
-                                    </span>
-                                    <span class="kt-menu__link-text">Data Config</span>
-                                    <i class="kt-menu__ver-arrow la la-angle-right"></i>
-                                </a>
-                                <div class="kt-menu__submenu ">
-                                    <span class="kt-menu__arrow"></span>
-                                    <ul class="kt-menu__subnav">
-                                        <li class="kt-menu__item " aria-haspopup="true">
-                                            <a href="{{ url('/menus') }}" class="kt-menu__link ajaxify">
-                                                <span class="kt-menu__link-icon">
-                                                    <i class="flaticon-layers"></i>
-                                                </span>
-                                                <span class="kt-menu__link-text">Menu</span>
-                                            </a>
-                                        </li>
-                                        <li class="kt-menu__item " aria-haspopup="true">
-                                            <a href="{{ url('/roles') }}" class="kt-menu__link ajaxify">
-                                                <span class="kt-menu__link-icon">
-                                                    <i class="flaticon-avatar"></i>
-                                                </span>                                                
-                                                <span class="kt-menu__link-text">Roles</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
-                    <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                        <span class="kt-menu__link-icon">
-                            <i class="flaticon-imac"></i>
-                        </span>
-                        <span class="kt-menu__link-text">Content Management</span>
-                        <i class="kt-menu__ver-arrow la la-angle-right"></i>
-                    </a>
-                    <div class="kt-menu__submenu ">
-                        <span class="kt-menu__arrow"></span>
-                        <ul class="kt-menu__subnav">
-                            <li class="kt-menu__item " aria-haspopup="true">
-                                <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                                    <span class="kt-menu__link-icon">
-                                        <i class="flaticon-responsive"></i>
-                                    </span>
-                                    <span class="kt-menu__link-text">Create Content</span>
-                                </a>
-                            </li>
-                            <li class="kt-menu__item " aria-haspopup="true">
-                                <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                                    <span class="kt-menu__link-icon">
-                                        <i class="flaticon-presentation-1"></i>
-                                    </span>
-                                    <span class="kt-menu__link-text">Review Content</span>
-                                </a>
-                            </li>
-                            <li class="kt-menu__item " aria-haspopup="true">
-                                <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                                    <span class="kt-menu__link-icon">
-                                        <i class="flaticon-like"></i>
-                                    </span>
-                                    <span class="kt-menu__link-text">Approve Content</span>
-                                </a>
-                            </li>
-                            <li class="kt-menu__item " aria-haspopup="true">
-                                <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                                    <span class="kt-menu__link-icon">
-                                        <i class="flaticon-bell"></i>
-                                    </span>
-                                    <span class="kt-menu__link-text">Publish Content</span>
-                                </a>
-                            </li>
-                            <li class="kt-menu__item " aria-haspopup="true">
-                                <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                                    <span class="kt-menu__link-icon">
-                                        <i class="flaticon-edit-1"></i>
-                                    </span>
-                                    <span class="kt-menu__link-text">Edit Content</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
-                    <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                        <span class="kt-menu__link-icon">
-                            <i class="flaticon2-group"></i>
-                        </span>
-                        <span class="kt-menu__link-text">User Management</span>
-                        <i class="kt-menu__ver-arrow la la-angle-right"></i>
-                    </a>
-                    <div class="kt-menu__submenu ">
-                        <span class="kt-menu__arrow"></span>
-                        <ul class="kt-menu__subnav">
-                            <li class="kt-menu__item " aria-haspopup="true">
-                                <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                                    <span class="kt-menu__link-icon">
-                                        <i class="flaticon-home-2"></i>
-                                    </span>
-                                    <span class="kt-menu__link-text">Department</span>
-                                </a>
-                            </li>
-                            <li class="kt-menu__item " aria-haspopup="true">
-                                <a href="{{ url('/user') }}" class="kt-menu__link kt-menu__toggle ajaxify">
-                                    <span class="kt-menu__link-icon">
-                                        <i class="flaticon-user"></i>
-                                    </span>
-                                    <span class="kt-menu__link-text">User</span>
-                                </a>
-                            </li>
-                            <li class="kt-menu__item " aria-haspopup="true">
-                                <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                                    <span class="kt-menu__link-icon">
-                                        <i class="flaticon-cogwheel-2"></i>
-                                    </span>
-                                    <span class="kt-menu__link-text">Role & Permission</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
-                    <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                        <span class="kt-menu__link-icon">
-                            <i class="flaticon-email"></i>
-                        </span>
-                        <span class="kt-menu__link-text">Message Box</span>
-                        <i class="kt-menu__ver-arrow la la-angle-right"></i>
-                    </a>
-                    <div class="kt-menu__submenu ">
-                        <span class="kt-menu__arrow"></span>
-                        <ul class="kt-menu__subnav">
-                            <li class="kt-menu__item " aria-haspopup="true">
-                                <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                                    <span class="kt-menu__link-icon">
-                                        <i class="flaticon2-arrow-down"></i>
-                                    </span>
-                                    <span class="kt-menu__link-text">Inbox</span>
-                                </a>
-                            </li>
-                            <li class="kt-menu__item " aria-haspopup="true">
-                                <a href="javascript:;" class="kt-menu__link kt-menu__toggle ajaxify">
-                                    <span class="kt-menu__link-icon">
-                                        <i class="flaticon2-arrow-up"></i>
-                                    </span>
-                                    <span class="kt-menu__link-text">Outbox</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
-                    <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                        <span class="kt-menu__link-icon">
-                            <i class="flaticon2-start-up"></i>
-                        </span>
-                        <span class="kt-menu__link-text">Sourcing Management</span>
-                        <i class="kt-menu__ver-arrow la la-angle-right"></i>
-                    </a>
-                    <div class="kt-menu__submenu ">
-                        <span class="kt-menu__arrow"></span>
-                        <ul class="kt-menu__subnav">
-                            <li class="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
-                                <a href="{{ url('/sourcing') }}" class="kt-menu__link kt-menu__toggle ajaxify">
-                                    <span class="kt-menu__link-icon">
-                                        <i class="flaticon-list"></i>
-                                    </span>
-                                    <span class="kt-menu__link-text">List of Sourcing Invitation</span>
-                                </a>
-                            </li>
-                            <li class="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
-                                <a href="javascript:;" class="kt-menu__link kt-menu__toggle ajaxify">
-                                    <span class="kt-menu__link-icon">
-                                        <i class="flaticon-laptop"></i>
-                                    </span>
-                                    <span class="kt-menu__link-text">View Registration Vendor</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
-                    <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                        <span class="kt-menu__link-icon">
-                            <i class="flaticon-imac"></i>
-                        </span>
-                        <span class="kt-menu__link-text">Vendor Management</span>
-                        <i class="kt-menu__ver-arrow la la-angle-right"></i>
-                    </a>
-                    <div class="kt-menu__submenu ">
-                        <span class="kt-menu__arrow"></span>
-                        <ul class="kt-menu__subnav">
-                            <li class="kt-menu__item " aria-haspopup="true">
-                                <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                                    <span class="kt-menu__link-icon">
-                                        <i class="flaticon-responsive"></i>
-                                    </span>
-                                    <span class="kt-menu__link-text">Review Vendor Request</span>
-                                </a>
-                            </li>
-                            <li class="kt-menu__item " aria-haspopup="true">
-                                <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                                    <span class="kt-menu__link-icon">
-                                        <i class="flaticon-presentation-1"></i>
-                                    </span>
-                                    <span class="kt-menu__link-text">Due Diligence</span>
-                                </a>
-                            </li>
-                            <li class="kt-menu__item " aria-haspopup="true">
-                                <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                                    <span class="kt-menu__link-icon">
-                                        <i class="flaticon-like"></i>
-                                    </span>
-                                    <span class="kt-menu__link-text">Registration Approval</span>
-                                </a>
-                            </li>
-                            <li class="kt-menu__item " aria-haspopup="true">
-                                <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                                    <span class="kt-menu__link-icon">
-                                        <i class="flaticon-bell"></i>
-                                    </span>
-                                    <span class="kt-menu__link-text">Manage Black List Vendors</span>
-                                </a>
-                            </li>
-                            <li class="kt-menu__item " aria-haspopup="true">
-                                <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                                    <span class="kt-menu__link-icon">
-                                        <i class="flaticon-edit-1"></i>
-                                    </span>
-                                    <span class="kt-menu__link-text">Manage Red List Vendors</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <!-- <li class="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
-                    <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                        <span class="kt-menu__link-icon">
-                            <i class="flaticon-interface-1"></i>
-                        </span>
-                        <span class="kt-menu__link-text">Master</span>
-                        <i class="kt-menu__ver-arrow la la-angle-right"></i>
-                    </a>
-                    <div class="kt-menu__submenu ">
-                        <span class="kt-menu__arrow"></span>
-                        <ul class="kt-menu__subnav">
-                            <li class="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
-                                <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                                    <i class="kt-menu__link-bullet kt-menu__link-bullet--line">
-                                        <span></span>
-                                    </i>
-                                    <span class="kt-menu__link-text">Data User</span>
-                                    <i class="kt-menu__ver-arrow la la-angle-right"></i>
-                                </a>
-                                <div class="kt-menu__submenu ">
-                                    <span class="kt-menu__arrow"></span>
-                                    <ul class="kt-menu__subnav">
-                                        <li class="kt-menu__item " aria-haspopup="true">
-                                            <a href="{{ url('/user') }}" class="kt-menu__link ajaxify">
-                                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                                    <span></span>
-                                                </i>
-                                                <span class="kt-menu__link-text">User</span>
-                                            </a>
-                                        </li>
-                                        <li class="kt-menu__item " aria-haspopup="true">
-                                            <a href="{{ url('/roles') }}" class="kt-menu__link ajaxify">
-                                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                                    <span></span>
-                                                </i>
-                                                <span class="kt-menu__link-text">Role</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
-                                <a href="javascript:;" class="kt-menu__link kt-menu__toggle">
-                                    <i class="kt-menu__link-bullet kt-menu__link-bullet--line">
-                                        <span></span>
-                                    </i>
-                                    <span class="kt-menu__link-text">Data Config</span>
-                                    <i class="kt-menu__ver-arrow la la-angle-right"></i>
-                                </a>
-                                <div class="kt-menu__submenu ">
-                                    <span class="kt-menu__arrow"></span>
-                                    <ul class="kt-menu__subnav">
-                                        <li class="kt-menu__item " aria-haspopup="true">
-                                            <a href="{{ url('/menus') }}" class="kt-menu__link ajaxify">
-                                                <span class="kt-menu__link-icon">
-                                                    <i class="flaticon-layers"></i>
-                                                </span>
-                                                <span class="kt-menu__link-text">Menu</span>
-                                            </a>
-                                        </li>
-                                        <li class="kt-menu__item " aria-haspopup="true">
-                                            <a href="{{ url('/link_2') }}" class="kt-menu__link ajaxify">
-                                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot">
-                                                    <span></span>
-                                                </i>
-                                                <span class="kt-menu__link-text">Link 2</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                 -->
-            </ul>
+            <?php
+            // dbug('las');
+            function drawMenu($menu, $url , $isparent = '1'){
+                echo $isparent == '1' ? '<ul class="kt-menu__nav ">' : '<ul class="kt-menu__subnav">';
+                foreach ($menu as $key => $value) {
+                    $menu_link      = (!empty($value->{'menu_link'}) ? $value->{'menu_link'} : 'page404');
+                    $url            = $url == '' ? 'dashboard' : $url;
+                    $classAjaxify   = collect($value->children)->isNotEmpty() ? 'kt-menu__toggle' : 'ajaxify';
+                    $href           = collect($value->children)->isNotEmpty() ? 'javascript:void(0)' : ($menu_link == 'javascript:void(0)' ? 'javascript:void(0)' : route($menu_link.'.index'));
+                    $icon           = $value->icon;
+                    $angle_right    = collect($value->children)->isNotEmpty() ? '<i class="kt-menu__ver-arrow la la-angle-right"></i>' : '';
+                    $issubmenu      = $isparent == '1' ? 'parent' : 'submenu';
+                    $isActive       = $url == $menu_link ? 'kt-menu__item--active ' : '';
+                    $isOpen         = 'kt-menu__item--open';
+                    // dd($value, $classAjaxify, $href, $icon, $angle_right, $issubmenu, $isActive, $isOpen);
+                    echo 
+                    '<li class="kt-menu__item  '.$isActive.$issubmenu.'" aria-haspopup="true">
+                        <a href="'.$href.'" class="kt-menu__link '.$classAjaxify.' '.$issubmenu.'">
+                            <span class="kt-menu__link-icon">
+                                <i class="'.$icon.'"></i>
+                            </span>
+                            <span class="kt-menu__link-text">'.$value->name.'</span>'.
+                            $angle_right.
+                        '</a>';
+                    if (collect($value->children)->isNotEmpty()) {
+                        echo
+                        '<div class="kt-menu__submenu">'.
+                            '<span class="kt-menu__arrow"></span>';
+                            drawMenu($value->children, $url, '0');
+                        echo
+                        '</div>';
+                    }
+                }
+                echo '</ul>';
+            }
+
+            $menu       = getMenu();
+            $url        = Request::segment(1);
+
+            drawMenu($menu, $url);
+            ?>
         </div>
     </div>
     <!-- end:: Aside Menu -->

@@ -46,16 +46,25 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if ($exception instanceof \BadMethodCallException) {
+            $data['titlehead'] = 'Error BadMethodCallException';
+            $data['errors']    = $exception->getMessage();
+            return response()->view('templates.404', $data);
+        }
+
         if ($this->isHttpException($exception)) {
             if ($exception->getStatusCode() == 404) {
-                return redirect()->action('Page404@index');
+                // return redirect()->action('Page404@index');
+				return redirect()->action(route('page404.index'));
             }
         }
 
         if ($exception instanceof \Spatie\Permission\Exceptions\UnauthorizedException) {
             // return response()->json(['User have not permission for this page access.']);
-            return redirect()->action('bloked@index');
+            return redirect()->action('Blocked@index');
         }
+
+        
      
         return parent::render($request, $exception);
     }

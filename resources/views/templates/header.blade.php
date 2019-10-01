@@ -627,7 +627,7 @@ Use dot badge instead of animated pulse effect:
                 <div class="kt-header__topbar-user">
                     <span class="kt-header__topbar-welcome kt-hidden-mobile">Hi,</span>
                     <span class="kt-header__topbar-username kt-hidden-mobile">{{  explode(' ', trim(Auth::user()->name))[0]  }}</span>
-                    <img class="kt-hidden" alt="Pic" src="assets/media/users/300_25.jpg" />
+                    <img class="kt-hidden" alt="Pic" src="" />
 
                     <!--use below badge element instead the user avatar to display username's first letter(remove kt-hidden class to display it) -->
                     <span class="kt-badge kt-badge--username kt-badge--unified-success kt-badge--lg kt-badge--rounded kt-badge--bold">{{ Auth::user()->name[0] }}</span>
@@ -638,7 +638,7 @@ Use dot badge instead of animated pulse effect:
                 <!--begin: Head -->
                 <div class="kt-user-card kt-user-card--skin-dark kt-notification-item-padding-x" style="background-image: url(assets/media/misc/bg-1.jpg)">
                     <div class="kt-user-card__avatar">
-                        <img class="kt-hidden" alt="Pic" src="assets/media/users/300_25.jpg" />
+                        <img class="kt-hidden" alt="Pic" src="" />
 
                         <!--use below badge element instead the user avatar to display username's first letter(remove kt-hidden class to display it) -->
                         <span class="kt-badge kt-badge--lg kt-badge--rounded kt-badge--bold kt-font-success">{{ Auth::user()->name[0] }}</span>

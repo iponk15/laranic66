@@ -10,15 +10,16 @@
             <div class="kt-portlet__head-toolbar">
                 <div class="kt-portlet__head-wrapper">
                     <div class="dropdown dropdown-inline">
-                        <a href="{{ $url . '/edit/' . $id }}" class="btn btn-secondary btn-sm btn-icon btn-elevate btn-elevate-air ajaxify"><i class="fa fa-sync"></i></a>
+                        <a href="{{ route($route.'.edit',['user' => $id]) }}" class="btn btn-secondary btn-sm btn-icon btn-elevate btn-elevate-air ajaxify"><i class="fa fa-sync"></i></a>
                     </div>
                 </div>
             </div>
         </div>
 
         <!--begin::Form-->
-        <form class="kt-form kt-form--label-right form_edit" action="{{ $url . '/update/' . $id }}" id="kt_form_1" method="post" data-confirm="1">
+        <form class="kt-form kt-form--label-right form_edit" action="{{ route($route.'.update', ['user' => $id]) }}" id="kt_form_1" method="POST" data-confirm="1">
             {{csrf_field()}}
+			@method('PUT')
             <div class="kt-portlet__body">
                 <div class="form-group form-group-last kt-hide">
                     <div class="alert alert-danger" role="alert" id="kt_form_1_msg">
@@ -59,7 +60,7 @@
                 <div class="kt-form__actions">
                     <div class="row">
                         <div class="col-lg-10 ml-lg-auto">
-                            <a class="btn btn-secondary ajaxify" href="{{ $url }}">Back</a>
+                            <a class="btn btn-secondary ajaxify" href="{{ route($route.'.index') }}">Back</a>
                             <button type="submit" class="btn btn-success">Submit</button>
                         </div>
                     </div>
@@ -68,13 +69,14 @@
         </form>
         <!--end::Form-->
     </div>
-    <a href="{{ $url . '/edit/' . $id }}" class="reload ajaxify"></a>
+    <a href="{{ route($route.'.edit', ['user' => $id]) }}" class="reload ajaxify"></a>
     <script>
         $(document).ready(function () {
             // set form validation
-            var rules   = { name        : { required: true },
-                            email       : { required: true, email: true },
-                          };
+            var rules   = { 
+				name  : { required: true },
+                email : { required: true, email: true },
+			};
             var message = {};
 
             global.init_form_validation('.form_edit',rules,message);

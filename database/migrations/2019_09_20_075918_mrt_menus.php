@@ -19,13 +19,12 @@ class MrtMenus extends Migration
             $table->string('menu_nama')->nullable();
             $table->string('menu_link')->nullable();
             $table->string('menu_icon')->nullable();
-            $table->integer('menu_order', false, true)->nullable();
-            $table->integer('menu_status', false, true)->nullable();
-            $table->integer('menu_createdby', false, true)->nullable();
-            $table->datetime('menu_createddate')->nullable();
-            $table->integer('menu_updatedby', false, true)->nullable();
-            $table->timestamp('menu_lastupdate')->default(\DB::raw('CURRENT_TIMESTAMP'))->nullable();
             $table->string('menu_ip','15')->nullable();
+            $table->integer('menu_order', false, true)->nullable();
+            $table->boolean('menu_status', false, true)->nullable();
+            $table->integer('created_by', false, true)->nullable();
+            $table->integer('updated_by', false, true)->nullable();
+            $table->timestamps();
         });
     }
 

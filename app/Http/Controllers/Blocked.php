@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class bloked extends Controller
+class Blocked extends Controller
 {
     function index(){
         $data['titlehead']  = 'Page Bloked - User have not permission for this page access.';

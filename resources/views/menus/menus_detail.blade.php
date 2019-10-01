@@ -1,4 +1,4 @@
-<form class="kt-form kt-form--label-right form_detail" action="{{url('menus_update/'.$id)}}" method="post">
+<form class="kt-form kt-form--label-right form_detail" action="{{ route($route.'.update_menus', ['id' => $id] )}}" method="post">
 	{{csrf_field()}}
     <div class="form-group">
         <label for="recipient-name" class="form-control-label">Menu link:</label>

@@ -10,14 +10,14 @@
             <div class="kt-portlet__head-toolbar">
                 <div class="kt-portlet__head-wrapper">
                     <div class="dropdown dropdown-inline">
-                        <a href="{{ $url . '/create' }}" class="btn btn-secondary btn-sm btn-icon btn-elevate btn-elevate-air ajaxify"><i class="fa fa-sync"></i></a>
+                        <a href="{{ route($route.'.create') }}" class="btn btn-secondary btn-sm btn-icon btn-elevate btn-elevate-air ajaxify"><i class="fa fa-sync"></i></a>
                     </div>
                 </div>
             </div>
         </div>
 
         <!--begin::Form-->
-        <form class="kt-form kt-form--label-right form_add" action="{{ $url . '/store' }}" id="kt_form_1" method="post">
+        <form class="kt-form kt-form--label-right form_add" action="{{ route($route.'.store') }}" id="kt_form_1" method="POST">
             {{csrf_field()}}
             <div class="kt-portlet__body">
                 <div class="form-group form-group-last kt-hide">
@@ -59,7 +59,7 @@
                 <div class="kt-form__actions">
                     <div class="row">
                         <div class="col-lg-10 ml-lg-auto">
-                            <a class="btn btn-secondary ajaxify" href="{{ $url }}">Back</a>
+                            <a class="btn btn-secondary ajaxify" href="{{ route($route.'.index') }}">Back</a>
                             <button type="submit" class="btn btn-success">Submit</button>
                         </div>
                     </div>
@@ -68,14 +68,15 @@
         </form>
         <!--end::Form-->
     </div>
-    <a href="{{ $url . '/create' }}" class="reload ajaxify"></a>
+    <a href="{{ route($route.'.create') }}" class="reload ajaxify"></a>
     <script>
         $(document).ready(function () {
             // set form validation
-            var rules   = { name        : { required: true },
-                            email       : { required: true, email: true },
-                            password    : { required: true },
-                          };
+            var rules   = { 
+				name        : { required: true },
+                email       : { required: true, email: true },
+                password    : { required: true },
+			};
             
             var message = {};
 

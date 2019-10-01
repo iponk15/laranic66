@@ -18,7 +18,7 @@ $(document).on('click','.ajaxify',function(e){
         }
     });
 
-    var posting = $.post( url, { status_link: 'ajax' } );
+    var posting = $.get( url, { status_link: 'ajax' } );
 
     posting.done(function( data ) {
         // console.log(data);

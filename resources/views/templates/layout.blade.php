@@ -88,7 +88,7 @@
 							@include('templates/subheader')
 							<!-- end:: Content Head Subheader-->
 							<!-- begin:: Content -->
-							<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+							<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid" id="body-ajaxify">
 								@yield('fullcontent')
 							</div>
 							<!-- end:: Content -->
@@ -526,7 +526,7 @@
 						Demo 1
 					</div>
 					<div class="kt-demo-panel__item-preview">
-						<img src="assets/media/demos/preview/demo1.jpg" alt="" />
+						<img src="" alt="" />
 						<div class="kt-demo-panel__item-preview-overlay">
 							<a href="../demo1/index.html" class="btn btn-brand btn-elevate " target="_blank">Default</a>
 							<a href="../demo1/rtl/index.html" class="btn btn-light btn-elevate" target="_blank">RTL Version</a>
@@ -538,7 +538,7 @@
 						Demo 2
 					</div>
 					<div class="kt-demo-panel__item-preview">
-						<img src="assets/media/demos/preview/demo2.jpg" alt="" />
+						<img src="" alt="" />
 						<div class="kt-demo-panel__item-preview-overlay">
 							<a href="../demo2/index.html" class="btn btn-brand btn-elevate " target="_blank">Default</a>
 							<a href="../demo2/rtl/index.html" class="btn btn-light btn-elevate" target="_blank">RTL Version</a>
@@ -550,7 +550,7 @@
 						Demo 3
 					</div>
 					<div class="kt-demo-panel__item-preview">
-						<img src="assets/media/demos/preview/demo3.jpg" alt="" />
+						<img src="" alt="" />
 						<div class="kt-demo-panel__item-preview-overlay">
 							<a href="../demo3/index.html" class="btn btn-brand btn-elevate " target="_blank">Default</a>
 							<a href="../demo3/rtl/index.html" class="btn btn-light btn-elevate" target="_blank">RTL Version</a>
@@ -562,7 +562,7 @@
 						Demo 4
 					</div>
 					<div class="kt-demo-panel__item-preview">
-						<img src="assets/media/demos/preview/demo4.jpg" alt="" />
+						<img src="" alt="" />
 						<div class="kt-demo-panel__item-preview-overlay">
 							<a href="../demo4/index.html" class="btn btn-brand btn-elevate " target="_blank">Default</a>
 							<a href="../demo4/rtl/index.html" class="btn btn-light btn-elevate" target="_blank">RTL Version</a>
@@ -574,7 +574,7 @@
 						Demo 5
 					</div>
 					<div class="kt-demo-panel__item-preview">
-						<img src="assets/media/demos/preview/demo5.jpg" alt="" />
+						<img src="" alt="" />
 						<div class="kt-demo-panel__item-preview-overlay">
 							<a href="../demo5/index.html" class="btn btn-brand btn-elevate " target="_blank">Default</a>
 							<a href="../demo5/rtl/index.html" class="btn btn-light btn-elevate" target="_blank">RTL Version</a>
@@ -586,7 +586,7 @@
 						Demo 6
 					</div>
 					<div class="kt-demo-panel__item-preview">
-						<img src="assets/media/demos/preview/demo6.jpg" alt="" />
+						<img src="" alt="" />
 						<div class="kt-demo-panel__item-preview-overlay">
 							<a href="../demo6/index.html" class="btn btn-brand btn-elevate " target="_blank">Default</a>
 							<a href="../demo6/rtl/index.html" class="btn btn-light btn-elevate" target="_blank">RTL Version</a>
@@ -598,7 +598,7 @@
 						Demo 7
 					</div>
 					<div class="kt-demo-panel__item-preview">
-						<img src="assets/media/demos/preview/demo7.jpg" alt="" />
+						<img src="" alt="" />
 						<div class="kt-demo-panel__item-preview-overlay">
 							<a href="../demo7/index.html" class="btn btn-brand btn-elevate " target="_blank">Default</a>
 							<a href="../demo7/rtl/index.html" class="btn btn-light btn-elevate" target="_blank">RTL Version</a>
@@ -610,7 +610,7 @@
 						Demo 8
 					</div>
 					<div class="kt-demo-panel__item-preview">
-						<img src="assets/media/demos/preview/demo8.jpg" alt="" />
+						<img src="" alt="" />
 						<div class="kt-demo-panel__item-preview-overlay">
 							<a href="../demo8/index.html" class="btn btn-brand btn-elevate " target="_blank">Default</a>
 							<a href="../demo8/rtl/index.html" class="btn btn-light btn-elevate" target="_blank">RTL Version</a>
@@ -622,7 +622,7 @@
 						Demo 9
 					</div>
 					<div class="kt-demo-panel__item-preview">
-						<img src="assets/media/demos/preview/demo9.jpg" alt="" />
+						<img src="" alt="" />
 						<div class="kt-demo-panel__item-preview-overlay">
 							<a href="../demo9/index.html" class="btn btn-brand btn-elevate " target="_blank">Default</a>
 							<a href="../demo9/rtl/index.html" class="btn btn-light btn-elevate" target="_blank">RTL Version</a>
@@ -634,7 +634,7 @@
 						Demo 10
 					</div>
 					<div class="kt-demo-panel__item-preview">
-						<img src="assets/media/demos/preview/demo10.jpg" alt="" />
+						<img src="" alt="" />
 						<div class="kt-demo-panel__item-preview-overlay">
 							<a href="../demo10/index.html" class="btn btn-brand btn-elevate " target="_blank">Default</a>
 							<a href="../demo10/rtl/index.html" class="btn btn-light btn-elevate" target="_blank">RTL Version</a>
@@ -646,7 +646,7 @@
 						Demo 11
 					</div>
 					<div class="kt-demo-panel__item-preview">
-						<img src="assets/media/demos/preview/demo11.jpg" alt="" />
+						<img src="" alt="" />
 						<div class="kt-demo-panel__item-preview-overlay">
 							<a href="../demo11/index.html" class="btn btn-brand btn-elevate " target="_blank">Default</a>
 							<a href="../demo11/rtl/index.html" class="btn btn-light btn-elevate" target="_blank">RTL Version</a>
@@ -658,7 +658,7 @@
 						Demo 12
 					</div>
 					<div class="kt-demo-panel__item-preview">
-						<img src="assets/media/demos/preview/demo12.jpg" alt="" />
+						<img src="" alt="" />
 						<div class="kt-demo-panel__item-preview-overlay">
 							<a href="../demo12/index.html" class="btn btn-brand btn-elevate " target="_blank">Default</a>
 							<a href="../demo12/rtl/index.html" class="btn btn-light btn-elevate" target="_blank">RTL Version</a>
@@ -670,7 +670,7 @@
 						Demo 13
 					</div>
 					<div class="kt-demo-panel__item-preview">
-						<img src="assets/media/demos/preview/demo13.jpg" alt="" />
+						<img src="" alt="" />
 						<div class="kt-demo-panel__item-preview-overlay">
 							<a href="#" class="btn btn-brand btn-elevate disabled">Coming soon</a>
 						</div>
@@ -681,7 +681,7 @@
 						Demo 14
 					</div>
 					<div class="kt-demo-panel__item-preview">
-						<img src="assets/media/demos/preview/demo14.jpg" alt="" />
+						<img src="" alt="" />
 						<div class="kt-demo-panel__item-preview-overlay">
 							<a href="#" class="btn btn-brand btn-elevate disabled">Coming soon</a>
 						</div>
@@ -780,7 +780,7 @@
 										<div class="kt-chat__message kt-chat__message--success">
 											<div class="kt-chat__user">
 												<span class="kt-media kt-media--circle kt-media--sm">
-													<img src="assets/media/users/100_12.jpg" alt="image">
+													<img src="" alt="image">
 												</span>
 												<a href="#" class="kt-chat__username">Jason Muller</span></a>
 												<span class="kt-chat__datetime">2 Hours</span>
@@ -794,7 +794,7 @@
 												<span class="kt-chat__datetime">30 Seconds</span>
 												<a href="#" class="kt-chat__username">You</span></a>
 												<span class="kt-media kt-media--circle kt-media--sm">
-													<img src="assets/media/users/300_21.jpg" alt="image">
+													<img src="" alt="image">
 												</span>
 											</div>
 											<div class="kt-chat__text">
@@ -804,7 +804,7 @@
 										<div class="kt-chat__message kt-chat__message--success">
 											<div class="kt-chat__user">
 												<span class="kt-media kt-media--circle kt-media--sm">
-													<img src="assets/media/users/100_12.jpg" alt="image">
+													<img src="" alt="image">
 												</span>
 												<a href="#" class="kt-chat__username">Jason Muller</span></a>
 												<span class="kt-chat__datetime">30 Seconds</span>
@@ -818,7 +818,7 @@
 												<span class="kt-chat__datetime">Just Now</span>
 												<a href="#" class="kt-chat__username">You</span></a>
 												<span class="kt-media kt-media--circle kt-media--sm">
-													<img src="assets/media/users/300_21.jpg" alt="image">
+													<img src="" alt="image">
 												</span>
 											</div>
 											<div class="kt-chat__text">
@@ -828,7 +828,7 @@
 										<div class="kt-chat__message kt-chat__message--success">
 											<div class="kt-chat__user">
 												<span class="kt-media kt-media--circle kt-media--sm">
-													<img src="assets/media/users/100_12.jpg" alt="image">
+													<img src="" alt="image">
 												</span>
 												<a href="#" class="kt-chat__username">Jason Muller</span></a>
 												<span class="kt-chat__datetime">2 Hours</span>
@@ -842,7 +842,7 @@
 												<span class="kt-chat__datetime">30 Seconds</span>
 												<a href="#" class="kt-chat__username">You</span></a>
 												<span class="kt-media kt-media--circle kt-media--sm">
-													<img src="assets/media/users/300_21.jpg" alt="image">
+													<img src="" alt="image">
 												</span>
 											</div>
 											<div class="kt-chat__text">
@@ -852,7 +852,7 @@
 										<div class="kt-chat__message kt-chat__message--success">
 											<div class="kt-chat__user">
 												<span class="kt-media kt-media--circle kt-media--sm">
-													<img src="assets/media/users/100_12.jpg" alt="image">
+													<img src="" alt="image">
 												</span>
 												<a href="#" class="kt-chat__username">Jason Muller</span></a>
 												<span class="kt-chat__datetime">30 Seconds</span>
@@ -866,7 +866,7 @@
 												<span class="kt-chat__datetime">Just Now</span>
 												<a href="#" class="kt-chat__username">You</span></a>
 												<span class="kt-media kt-media--circle kt-media--sm">
-													<img src="assets/media/users/300_21.jpg" alt="image">
+													<img src="" alt="image">
 												</span>
 											</div>
 											<div class="kt-chat__text">

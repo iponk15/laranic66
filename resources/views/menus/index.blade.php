@@ -25,7 +25,7 @@
                 </div>
             </div>
             <div class="kt-portlet__body">
-                <form class="kt-form kt-form--label-right form_add" action="{{url('menus_store')}}" id="kt_form_1" method="post">
+                <form class="kt-form kt-form--label-right form_add" action="{{ route($route.'.store_parent') }}" id="kt_form_1" method="post">
                     {{csrf_field()}}
                     <div class="kt-portlet__body">
                         <div class="row">
@@ -56,7 +56,6 @@
                                         </div>
                                     </div>
                                     <div class="kt-portlet__body" style="max-height: 300px;overflow-y: auto;" id="tree_menu">
-                                        <ul>
                                           
                                     </div>
                                 </div>
@@ -86,10 +85,11 @@
             </div>
         </div>
     </div>
-    <a href="{{url($url_page)}}" class="reload ajaxify"></a>
+    <a href="{{route($route.'.index')}}" class="reload ajaxify"></a>
     <script type="text/javascript">
         function customMenu(node)
         {
+            var urldetail = "{{ route($route.'.detail') }}";
             var tree = $("#tree_menu").jstree(true);
             var items = {
                 'Create' : {
@@ -127,7 +127,7 @@
                     'label' : 'Detail',
                     'action' : function (obj) {
                         $('#exampleModalLabel').text(node.text);
-                        var target = base_url+"/menus_detail/"+node.id;
+                        var target = urldetail+"?node="+node.id;
                         $('#menu_detail').html('');
                         $('#m_detail').modal('show');
                         KTApp.block("#m_detail",{});
@@ -153,7 +153,7 @@
 
             var message = {};
             global.init_form_validation('.form_add',rules,message);
-            console.log(base_url+'/menus_preview?operation=get_node');
+            var urljstree = "{{ route($route.'.preview_menu') }}";
             $('#tree_menu').jstree({
             'contextmenu' : {
                 'items': function (node) {
@@ -162,7 +162,7 @@
             },
             'core' : {
                 'data' : {
-                      'url' : base_url+'/menus_preview?operation=get_node',
+                      'url' : urljstree+'?operation=get_node',
                       'data' : function (node) {
                         return { 'id' : node.id };
                       },
@@ -175,7 +175,7 @@
               },
             'plugins' : ['state','contextmenu','wholerow','dnd']
         }).on('create_node.jstree', function (e, data) {
-              $.get(base_url+'/menus_preview?operation=create_node', { 'id' : data.node.parent, 'position' : data.position, 'text' : data.node.text })
+              $.get(urljstree+'?operation=create_node', { 'id' : data.node.parent, 'position' : data.position, 'text' : data.node.text })
                 .done(function (d) {
                   data.instance.set_id(data.node, d.id);
                 })
@@ -183,17 +183,17 @@
                   data.instance.refresh();
                 });
             }).on('rename_node.jstree', function (e, data) {
-              $.get(base_url+'/menus_preview?operation=rename_node', { 'id' : data.node.id, 'text' : data.text })
+              $.get(urljstree+'?operation=rename_node', { 'id' : data.node.id, 'text' : data.text })
                 .fail(function () {
                   data.instance.refresh();
                 });
             }).on('delete_node.jstree', function (e, data) {
-              $.get(base_url+'/menus_preview?operation=delete_node', { 'id' : data.node.id })
+              $.get(urljstree+'?operation=delete_node', { 'id' : data.node.id })
                 .fail(function () {
                   data.instance.refresh();
                 });
             }).bind("move_node.jstree", function(e, data) {
-              $.get(base_url+'/menus_preview?operation=move_node', { 'id' : data.node.id, 'parent' : data.parent, 'position' : data.position, 'old_position' : data.old_position})
+              $.get(urljstree+'?operation=move_node', { 'id' : data.node.id, 'parent' : data.parent, 'position' : data.position, 'old_position' : data.old_position})
                 .fail(function () {                     
                     swal.fire({title: "Failed!", text: "Connection error!", type: "error"}).then(function(){ 
                        data.instance.refresh();
