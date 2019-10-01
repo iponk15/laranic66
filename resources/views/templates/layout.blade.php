@@ -95,7 +95,7 @@
 						</div>
 					</div>
 					<!-- begin:: Footer -->
-					
+					@include('templates/footer')
 					<!-- end:: Footer -->
 				</div>
 			</div>
