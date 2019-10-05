@@ -22,9 +22,11 @@
                 <div class="kt-portlet__head-toolbar">
                     <div class="kt-portlet__head-wrapper">
                         <div class="dropdown dropdown-inline">
-                            <a href="{{ route($route.'.create') }}" class="btn btn-success btn-icon-sm btn-sm ajaxify btn-elevate btn-elevate-air" >
-                                <i class="flaticon2-plus"></i> Add Data
-                            </a>
+                            @can('permission-create')
+                                <a href="{{ route($route.'.create') }}" class="btn btn-success btn-icon-sm btn-sm ajaxify btn-elevate btn-elevate-air" >
+                                    <i class="flaticon2-plus"></i> Add Data
+                                </a>
+                            @endcan
                             <a href="{{ route($route.'.index') }}" class="btn btn-secondary btn-sm btn-icon btn-elevate btn-elevate-air ajaxify"><i class="fa fa-sync"></i></a>
                         </div>
                     </div>

@@ -8,6 +8,7 @@ use Vinkla\Hashids\Facades\Hashids;
 use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
 use Validator;
+use Gate;
 use DB;
 
 class RoleController extends Controller
@@ -18,10 +19,10 @@ class RoleController extends Controller
 
     public function __construct(){
         DB::enableQueryLog();
-        // $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index','store']]);
-        // $this->middleware('permission:role-create', ['only' => ['create','store']]);
-        // $this->middleware('permission:role-edit', ['only' => ['edit','update']]);
-        // $this->middleware('permission:role-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index','store']]);
+        $this->middleware('permission:role-create', ['only' => ['create','store']]);
+        $this->middleware('permission:role-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:role-delete', ['only' => ['destroy']]);
     }
 
     /**
@@ -319,8 +320,8 @@ class RoleController extends Controller
                 'name'       => $value->name,
                 'guard_name' => $value->guard_name,
                 'updated_at' => date('d F Y H:i:s', strtotime($value->updated_at)),
-                'action'     => '<a href="'.route($this->route.'.edit', ['role' => Hashids::encode($value->id)] ).'" class="btn btn-primary btn-icon btn-sm ajaxify"  data-container="body" data-toggle="kt-tooltip" data-placement="bottom" title="Edit"><i class="fa fa-pen"></i></a>&nbsp
-							     <a href="'.route($this->route.'.destroy', ['role_id' => Hashids::encode($value->id)] ).'" data-method="POST" class="btn btn-danger btn-icon btn-sm"  onClick="return f_status(2, this, event)" data-container="body" data-toggle="kt-tooltip" data-placement="bottom" title="Delete"><i class="fa fa-trash-alt"></i></a>&nbsp'
+                'action'     => ( Gate::check('role-edit') ? '<a href="'.route($this->route.'.edit', ['role' => Hashids::encode($value->id)] ).'" class="btn btn-primary btn-icon btn-sm ajaxify"  data-container="body" data-toggle="kt-tooltip" data-placement="bottom" title="Edit"><i class="fa fa-pen"></i></a>' : '' ) .'&nbsp'.
+							    ( Gate::check('role-delete') ? '<a href="'.route($this->route.'.destroy', ['role_id' => Hashids::encode($value->id)] ).'" data-method="POST" class="btn btn-danger btn-icon btn-sm"  onClick="return f_status(2, this, event)" data-container="body" data-toggle="kt-tooltip" data-placement="bottom" title="Delete"><i class="fa fa-trash-alt"></i></a>' : '' )
             ];
         }
 
@@ -330,5 +331,71 @@ class RoleController extends Controller
         ];
 
         echo json_encode($encode);
+    }
+
+    public function preview_menu(Request $request, $role_id = null)
+    {
+        if(isset($_GET['operation'])) {
+            try {
+                $result = null;
+                switch($_GET['operation']) {
+                    case 'get_node':
+                        $group_menu_id = [];
+                        $node = isset($_GET['id']) && $_GET['id'] !== '#' ? (int)$_GET['id'] : 0;
+                        $data = DB::table('mrt_menus');
+                        $data->selectRaw("menu_id AS id, menu_link AS name, menu_nama AS text, (CASE WHEN menu_parent IS NULL THEN '0' ELSE menu_parent END) AS parent_id, menu_icon AS icon, menu_link, menu_order");
+                        $data->orderBy('menu_order', 'asc');
+                        $data = $data->get();
+
+                 
+                        if ($role_id) {
+                            $selectMenu = Mrt_roles::selectRaw('mrt_groups.*');
+                            $join          = isset($role_id) ? $selectMenu->leftjoin('mrt_groups', 'group_role_id', '=', 'role_id')->leftjoin('mrt_menus', 'menu_id', '=', 'group_menu_id') : null;
+                            $where         = isset($role_id) ? $selectMenu->where('group_role_id', Hashids::decode($role_id)[0]) : null;
+                            $selectMenu    = $selectMenu->get();
+                            $group_menu_id = $selectMenu->pluck('group_menu_id')->all();
+                        }
+
+                        $itemsByReference = array();
+
+                        /*BEGIN BUILD STRUKTUR DATA*/
+                        foreach($data as $key => $item) {
+                            $itemsByReference[$item->id]           = $item;
+                            $itemsByReference[$item->id]->icon     = $item->icon == '' ? '' : 'flaticon-'.$item->icon;
+                            $itemsByReference[$item->id]->state    = in_array($item->id, $group_menu_id) ? ($item->menu_link == '' && $item->parent_id == 0 ? array('opened' => !0) : array('selected' => !0)) : '';
+                            $itemsByReference[$item->id]->children = array();
+                            $itemsByReference[$item->id]->data     = (object)[];
+                        }
+                        /*END BUILD STRUKTUR DATA*/
+          
+                        /*BEGIN SET GROUP CHILDREN YANG SESUAI DENGAN PARENT*/
+                        foreach($data as $key => &$item)
+                            if($item->parent_id && isset($itemsByReference[$item->parent_id]))
+                            $itemsByReference [$item->parent_id]->children[] = &$item;
+                        /*END SET GROUP CHILDREN YANG SESUAI DENGAN PARENT*/
+                
+                        /*BEGIN HAPUS CHILD YANG TIDAK SESUAI DENGAN PARENT*/
+                        foreach($data as $key => &$item) {
+                            if($item->parent_id && isset($itemsByReference[$item->parent_id]))
+                            unset($data[$key]);
+                        }
+                        /*END HAPUS CHILD YANG TIDAK SESUAI DENGAN PARENT*/
+                        $result = $data->values();
+                    break;
+                        default:
+                        throw new Exception('Unsupported operation: ' . $_GET['operation']);
+                    break;
+                }
+
+                header('Content-Type: application/json; charset=utf-8');
+                echo json_encode($result);
+            }catch (Exception $e) {
+                header($_SERVER["SERVER_PROTOCOL"] . ' 500 Server Error');
+                header('Status:  500 Server Error');
+                echo $e->getMessage();
+            }
+
+            die();
+        }
     }
 }

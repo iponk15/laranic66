@@ -40,52 +40,71 @@
                         <span class="form-text text-muted"></span>
                     </div>
                 </div>
+
                 <div class="form-group row">
-                    <div class="col-lg-2 col-md-3 col-sm-12"></div>
-                    <div class="col-lg-8 col-md-3 col-sm-12">
-                        <div class="row">
-                            <!-- <div class="col-md-12"> -->
-                                @if(empty($permission))
-                                    <div class="alert alert-danger" role="alert">
-                                        <strong>Sorry!</strong> Permission data is empty
-                                    </div>
-                                @else
-                                    @foreach($permission as $rows)
-                                        <table class="table table-sm table-bordered" style="width:15%;">
-                                            <thead>
-                                                <tr>
-                                                    <th style="background-color: lightgray;">
-                                                        <div class="kt-checkbox-list">
-                                                            <label class="kt-checkbox kt-checkbox--success">
-                                                                <input type="checkbox" class="checkAll" value="{{ $rows['menu_nama'] }}"> <b>{{ $rows['menu_nama'] }}</b>
-                                                                <span></span>
-                                                            </label>
-                                                        </div>
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($rows['list_permission'] as $params)
-                                                    <tr>
-                                                        <td width="20%" align="center">
-                                                            <div class="kt-checkbox-list">
-                                                                <label class="kt-checkbox kt-checkbox--success">
-                                                                    <input class="child-{{ $params->menu_nama }}" type="checkbox" name="permission[]" value="{{ $params['permin_id'] }}"> {{ $params['permin_name'] }}
-                                                                    <span></span>
-                                                                </label>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
+                    <label class="col-form-label col-lg-2 col-sm-12">  </label>
+                    <div class="col-lg-9 col-md-3 col-sm-12">
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr>
+                                    <th width="70%"><center><b>List Permission</b></center></th>
+                                    <th width="30%"><center><b>List Menu</b></center></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="row">
+                                            @if(empty($permission))
+                                                <div class="alert alert-danger" role="alert">
+                                                    <strong>Sorry!</strong> Permission data is empty
+                                                </div>
+                                            @else
+                                                @foreach($permission as $rows)
+                                                    <div class="col-lg-3">
+                                                        <table class="table table-sm table-bordered">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th style="background-color: lightgray;">
+                                                                        <div class="kt-checkbox-list">
+                                                                            <label class="kt-checkbox kt-checkbox--success">
+                                                                                <input type="checkbox" class="checkAll" value="{{ $rows['menu_nama'] }}"> <b>{{ $rows['menu_nama'] }}</b>
+                                                                                <span></span>
+                                                                            </label>
+                                                                        </div>
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach($rows['list_permission'] as $params)
+                                                                    <tr>
+                                                                        <td width="20%" align="center">
+                                                                            <div class="kt-checkbox-list">
+                                                                                <label class="kt-checkbox kt-checkbox--success">
+                                                                                    <input class="child-{{ $params->menu_nama }}" type="checkbox" name="permission[]" value="{{ $params['permin_id'] }}"> {{ $params['permin_name'] }}
+                                                                                    <span></span>
+                                                                                </label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 @endforeach
-                                            </tbody>
-                                        </table> &nbsp;&nbsp;&nbsp;&nbsp;
-                                    @endforeach
-                                @endif
-                            <!-- </div> -->
-                        </div>
+                                            @endif
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div id="m_tree_3" class="tree-demo"> </div>
+                                        <input type="hidden" name="val_jstree" value="" id="val_jstree">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <span class="form-text text-muted"></span>
                     </div>
-                    <div class="col-lg-2 col-md-3 col-sm-12"></div>
-                </div>
+                </div>        
             </div>
             <div class="kt-portlet__foot">
                 <div class="kt-form__actions">
@@ -105,6 +124,36 @@
     <a href="{{ route($route.'.create') }}" class="reload ajaxify"></a>
     <script>
         $(document).ready(function () {
+            // hirarki menu
+            $("#m_tree_3").jstree({
+                plugins: ["wholerow", "checkbox", "types"],
+                core: {
+                    themes: {
+                        responsive: !1
+                    },
+                    data : {
+                        // 'url'  : base_url+'/roles/preview_menu?operation=get_node',
+                        url : "{{ route($route.'.preview_menu') }}" + '?operation=get_node',
+                        'data' : function (node) {
+                            return { 'id' : node.id };
+                        },
+                        "dataType" : "json"
+                    },
+                    'check_callback' : true,
+                    'themes' : {
+                        'responsive' : false
+                    }
+                },
+                types: {
+                    default: {
+                        icon: "fa fa-folder m--font-warning"
+                    },
+                    file: {
+                        icon: "fa fa-file  m--font-warning"
+                    }
+                }
+            });
+
             // function checkall checkbox permission
             $('.checkAll').on('change', function(){
                 var value = $(this).val();

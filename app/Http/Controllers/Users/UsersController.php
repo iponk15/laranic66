@@ -10,6 +10,7 @@ use Validator;
 use App\User;
 use Auth;
 use DB;
+use Gate;
 
 class UsersController extends Controller
 {
@@ -19,10 +20,10 @@ class UsersController extends Controller
     private $route     = 'users';
 
     function __construct(){
-        //  $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index','store']]);
-        //  $this->middleware('permission:role-create', ['only' => ['create','store']]);
-        //  $this->middleware('permission:role-edit', ['only' => ['edit','update']]);
-        //  $this->middleware('permission:role-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:user-list|user-create|user-edit|user-delete', ['only' => ['index','store']]);
+        $this->middleware('permission:user-create', ['only' => ['create','store']]);
+        $this->middleware('permission:user-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:user-delete', ['only' => ['destroy']]);
     }
     
     /**
@@ -132,7 +133,12 @@ class UsersController extends Controller
         $data['breadcrumb'] = ['Index' => route($this->route.'.index'), 'Form Edit User' => route($this->route.'.edit', ['user' => $id])];
         $data['route']      = $this->route;
         $data['id']         = $id;
-        $data['records']    = User::selectRaw('name,email')->where('id', Hashids::decode($id)[0])->get();
+        $user               = User::find(Hashids::decode($id)[0]);
+        $roles              = Role::pluck('name','name')->all();
+        $userRole           = $user->roles->pluck('name','name')->all();
+        $data['records']    = $user;
+        $data['roles']      = $roles;
+
 
         return view($this->route.'.edit', $data);
     }
@@ -173,11 +179,17 @@ class UsersController extends Controller
             $user  = User::find($user_id);
             $user->fill($post);
             $query = $user->save();
+
+            DB::table('model_has_roles')->where('model_id',$user_id)->delete();
+            $user->assignRole($request->input('roles'));
         } else {
             $user  = User::find($user_id);
             $post['password']   = bcrypt($post['password']);
             $user->fill($post);
             $query = $user->save();
+
+            DB::table('model_has_roles')->where('model_id',$user_id)->delete();
+            $user->assignRole($request->input('roles'));
         }
 
         if ($query) {
@@ -265,9 +277,9 @@ class UsersController extends Controller
                 'name'       => $value->name,
                 'email'      => $value->email,
                 'role'       => $textRole,
-                'updated_at' => $value->updated_at,
-                'action'     => '<a href="'.route($this->route.'.edit', ['id' => Hashids::encode($value->id)] ).'" class="btn btn-primary btn-icon btn-sm ajaxify"  data-container="body" data-toggle="kt-tooltip" data-placement="bottom" title="Edit"><i class="fa fa-pen"></i></a>&nbsp
-								 <a href="'.route($this->route.'.destroy', ['id' => Hashids::encode($value->id)] ).'" class="btn btn-danger btn-icon btn-sm"  onClick="return f_status(2, this, event)" data-container="body" data-toggle="kt-tooltip" data-placement="bottom" title="Delete"><i class="fa fa-trash-alt"></i></a>&nbsp'
+                'updated_at' => date('l, d F Y H:i:s', strtotime($value->updated_at)),
+                'action'     => ( Gate::check('user-edit') ? '<a href="'.route($this->route.'.edit', ['user' => Hashids::encode($value->id)] ).'" class="btn btn-primary btn-icon btn-sm ajaxify"  data-container="body" data-toggle="kt-tooltip" data-placement="bottom" title="Edit"><i class="fa fa-pen"></i></a>' : '' ).'&nbsp'.
+                                ( Gate::check('user-delete') ? '<a href="'.route($this->route.'.destroy', ['user_id' => Hashids::encode($value->id)] ).'" class="btn btn-danger btn-icon btn-sm"  onClick="return f_status(2, this, event)" data-container="body" data-toggle="kt-tooltip" data-placement="bottom" title="Delete"><i class="fa fa-trash-alt"></i></a>&nbsp' : '')
             ];
         }
 

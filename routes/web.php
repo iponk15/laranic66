@@ -67,6 +67,7 @@ Route::group(['middleware' => 'auth'], function(){
 		Route::group(['as' => 'role.', 'prefix' => 'role', 'namespace' => 'configurs'], function () {
 			Route::post('table', ['as' => 'table', 'uses' => 'RoleController@table']);
 			Route::post('destroy/{role_id}', ['as' => 'destroy', 'uses' => 'RoleController@destroy']);
+			Route::get('preview_menu', ['as' => 'preview_menu', 'uses' => 'RoleController@preview_menu']);
 		});
 		Route::resource('role', 'Configurs\RoleController')->except(['show', 'destroy']);
 		// End route roles

@@ -37,14 +37,25 @@
                 <div class="form-group row">
                     <label class="col-form-label col-lg-2 col-sm-12">Name <span class="kt-font-danger kt-font-bold">*</span> </label>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        <input type="text" class="form-control" name="name" placeholder="Enter role name" autocomplete="off" value="{{ $records[0]->name }}">
+                        <input type="text" class="form-control" name="name" placeholder="Enter role name" autocomplete="off" value="{{ $records->name }}">
                         <span class="form-text text-muted"></span>
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-form-label col-lg-2 col-sm-12">Email <span class="kt-font-danger kt-font-bold">*</span></label>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        <input type="text" class="form-control" name="email" placeholder="Enter email" autocomplete="off" value="{{ $records[0]->email }}">
+                        <input type="text" class="form-control" name="email" placeholder="Enter email" autocomplete="off" value="{{ $records->email }}">
+                        <span class="form-text text-muted"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-form-label col-lg-2 col-sm-12">Roles <span class="kt-font-danger kt-font-bold">*</span></label>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        <select name="roles" class="form-control" multiple>
+                            @foreach($roles as $rows)
+                                <option value="{{$rows}}">{{$rows}}</option>
+                            @endforeach
+                        </select>
                         <span class="form-text text-muted"></span>
                     </div>
                 </div>

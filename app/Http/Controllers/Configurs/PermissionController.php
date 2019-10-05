@@ -9,9 +9,9 @@ use Spatie\Permission\Guard;
 use Illuminate\Http\Request;
 use App\Models\MrtModule;
 use Validator;
-use Auth;
 use Helper;
-
+use Auth;
+use Gate;
 class PermissionController extends Controller
 {
     private $titlehead = 'Page Permission Data';
@@ -19,8 +19,10 @@ class PermissionController extends Controller
 
     public function __construct(){
         DB::enableQueryLog();
-        // $enc = Hashids::encode(1);
-        // $dec = Hashids::decode($enc)[0];
+        $this->middleware('permission:permission-list|permission-create|permission-edit|permission-delete', ['only' => ['index','store']]);
+        $this->middleware('permission:permission-create', ['only' => ['create','store']]);
+        $this->middleware('permission:permission-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:permission-delete', ['only' => ['destroy']]);
     }
     /**
      * Display a listing of the resource.
@@ -288,8 +290,8 @@ class PermissionController extends Controller
                 'module_status' => $status[$value->module_status],
                 'name'          => $value->name,
                 'updated_at'    => date('d F Y H:i:s', strtotime($value->updated_at)),
-                'action'        => '<a href="'.route($this->route.'.edit', ['permission' => Hashids::encode($value->module_id)] ).'" class="btn btn-primary btn-icon btn-sm ajaxify"  data-container="body" data-toggle="kt-tooltip" data-placement="bottom" title="Edit"><i class="fa fa-pen"></i></a>&nbsp
-								    <a href="'.route($this->route.'.destroy', ['permission_id' => Hashids::encode($value->module_id)] ).'" data-method="POST" class="btn btn-danger btn-icon btn-sm"  onClick="return f_status(2, this, event)" data-container="body" data-toggle="kt-tooltip" data-placement="bottom" title="Delete"><i class="fa fa-trash-alt"></i></a>&nbsp'
+                'action'        => ( Gate::check('permission-edit') ? '<a href="'.route($this->route.'.edit', ['permission' => Hashids::encode($value->module_id)] ).'" class="btn btn-primary btn-icon btn-sm ajaxify"  data-container="body" data-toggle="kt-tooltip" data-placement="bottom" title="Edit"><i class="fa fa-pen"></i></a>' : '' ).'&nbsp'.
+								   ( Gate::check('permission-delete') ? '<a href="'.route($this->route.'.destroy', ['permission_id' => Hashids::encode($value->module_id)] ).'" data-method="POST" class="btn btn-danger btn-icon btn-sm"  onClick="return f_status(2, this, event)" data-container="body" data-toggle="kt-tooltip" data-placement="bottom" title="Delete"><i class="fa fa-trash-alt"></i></a>' : '' )
             ];
         }
 
