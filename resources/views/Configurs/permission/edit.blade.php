@@ -56,7 +56,9 @@
                                                 <i class="fa fa-code"></i>
                                             </span>
                                         </div>
-                                        <input value="{{ $rows->name }}" required type="text" name="permission_name" class="form-control form-control-danger" placeholder="Input permission name ...">
+                                        <input value="{{ $rows->permin_id }}" type="hidden" name="permission_id">
+                                        <input value="{{ $rows->module_id }}" type="hidden" name="permission_module_id">
+                                        <input value="{{ $rows->permin_name }}" required type="text" name="permission_name" class="form-control form-control-danger" placeholder="Input permission name ...">
                                     </div>
                                 </div>
                                 <div class="col-lg-2">

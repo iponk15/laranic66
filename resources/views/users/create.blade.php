@@ -48,6 +48,17 @@
                     </div>
                 </div>
                 <div class="form-group row">
+                    <label class="col-form-label col-lg-2 col-sm-12">Roles <span class="kt-font-danger kt-font-bold">*</span></label>
+                    <div class="col-lg-3 col-md-3 col-sm-12">
+                        <select name="" class="form-control" multiple>
+                            @foreach($roles as $rows)
+                                <option value="{{$rows}}">{{$rows}}</option>
+                            @endforeach
+                        </select>
+                        <span class="form-text text-muted"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
                     <label class="col-form-label col-lg-2 col-sm-12">Password <span class="kt-font-danger kt-font-bold">*</span></label>
                     <div class="col-lg-3 col-md-3 col-sm-12">
                         <input type="password" class="form-control" name="password" placeholder="Enter Password" autocomplete="off">

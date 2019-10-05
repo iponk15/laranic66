@@ -5,6 +5,7 @@ use Spatie\Permission\Models\Permission;
 use App\Http\Controllers\Controller;
 use Vinkla\Hashids\Facades\Hashids;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Guard;
 use Illuminate\Http\Request;
 use App\Models\MrtModule;
 use Validator;
@@ -79,7 +80,7 @@ class PermissionController extends Controller
         DB::beginTransaction();
 
         try {
-            // insert data untuk cateogry
+            // insert data untuk module
             $modules = new MrtModule();
             $post['module_menu_id']   = $post['module_menu_id'];
             $post['module_createdby'] = Auth::id();
@@ -89,7 +90,7 @@ class PermissionController extends Controller
             $modules->fill($post)->save();
             $lastId = $modules->module_id;
 
-            // insert data untuk sub cateogry
+            // insert data untuk sub permission
             foreach ($post['permission'] as $permission) {
                 Permission::create([
                     'module_id' => $lastId,
@@ -134,7 +135,7 @@ class PermissionController extends Controller
         $data['breadcrumb'] = ['Index' => route($this->route.'.index'), 'Form Edit Permission' => route($this->route.'.edit', ['permission' => $id])];
         $data['route']      = $this->route;
         $data['id']         = $id;
-        $data['records']    = MrtModule::selectRaw('menu_id,menu_nama,permissions.name')
+        $data['records']    = MrtModule::selectRaw('menu_id,menu_nama,permissions.id AS permin_id,permissions.name AS permin_name,permissions.module_id')
                                 ->leftJoin('mrt_menus','module_menu_id','menu_id')
                                 ->leftJoin('permissions','mrt_modules.module_id','permissions.module_id')
                                 ->where('mrt_modules.module_id', Hashids::decode($id)[0])->get();
@@ -173,26 +174,22 @@ class PermissionController extends Controller
         DB::beginTransaction();
 
         try {
-            // start update data untuk category
+            // start update data untuk module
             $module                   = MrtModule::find($module_id);
             $post['module_updatedby'] = Auth::id();
             $post['module_ip']        = $request->ip();
             $module->fill($post)->save();
-            // end update data untuk category
+            // end update data untuk module
 
-            // start update data untuk sub category
-            Permission::where('module_id', $module_id)->delete();
-
-            // insert data untuk sub cateogry
-            foreach ($post['permission'] as $permission) {
-                Permission::create([
-                    'module_id' => $module_id,
-                    'name'      => $permission['permission_name']
-                ]);
+            // insert data untuk permission
+            foreach ($post['permission'] as $key => $value) {
+                DB::table('permissions')
+                    ->where('id', $value['permission_id'])
+                    ->update(['name' => $value['permission_name']]);
             }
 
             DB::commit();
-            // end update data untuk sub category
+            // end update data untuk permission
             
             $response['status']  = 1;
             $response['message'] = 'Data saved successfully';            

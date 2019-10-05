@@ -21,9 +21,7 @@ Route::any('/','Dashboard@index');
 
 Route::group(['middleware' => 'auth'], function(){
 	Route::any('dashboard', ['as' => 'dashboard.index', 'uses' => 'Dashboard@index']);
-	// Route::get('page404', ['as' => 'page404.index', 'uses' => 'Page404@page404']);
 	Route::resource('page404', 'Page404');
-	// Route::get('blocked', ['as' => 'blocked.index', 'uses' => 'Blocked@blocked']);
 	Route::resource('blocked', 'Blocked');
 	
 	
@@ -64,6 +62,14 @@ Route::group(['middleware' => 'auth'], function(){
 		});
 		Route::resource('fetch', 'Configurs\FetchController');
 		// End route Fetch
+
+		// Start route roles
+		Route::group(['as' => 'role.', 'prefix' => 'role', 'namespace' => 'configurs'], function () {
+			Route::post('table', ['as' => 'table', 'uses' => 'RoleController@table']);
+			Route::post('destroy/{role_id}', ['as' => 'destroy', 'uses' => 'RoleController@destroy']);
+		});
+		Route::resource('role', 'Configurs\RoleController')->except(['show', 'destroy']);
+		// End route roles
 
 	});
 	// end route Config

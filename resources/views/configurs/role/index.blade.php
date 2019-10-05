@@ -45,30 +45,7 @@
                                         </span>
                                     </div>
                                 </div>
-                                <div class="col-md-4 kt-margin-b-20-tablet-and-mobile">
-                                    <div class="kt-input-icon kt-input-icon--left">
-                                        <input type="text" class="form-control role_name" placeholder="name only...">
-                                        <span class="kt-input-icon__icon kt-input-icon__icon--left">
-                                            <span><i class="la la-search"></i></span>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 kt-margin-b-20-tablet-and-mobile">
-                                    <div class="kt-input-icon kt-input-icon--left">
-                                        <select name="" class="role_status" style="width: 40%;">
-                                            <option value="">Pilih data</option>
-                                            <option value="0">Off</option>
-                                            <option value="1">On</option>
-                                        </select>
-                                    </div>
-                                </div>
                             </div>
-                        </div>
-                        <div class="col-xl-4 order-1 order-xl-2 kt-align-right">
-                            <a href="#" class="btn btn-default">
-                                <i class="la la-cart-plus"></i> New Order
-                            </a>
-                            <div class="kt-separator kt-separator--border-dashed kt-separator--space-lg d-xl-none"></div>
                         </div>
                     </div>
                 </div>
@@ -78,7 +55,7 @@
             <div class="kt-portlet__body kt-portlet__body--fit">
 
                 <!--begin: Datatable -->
-                <div class="user_datatable"></div>
+                <div class="{{ $datatable }}"></div>
 
                 <!--end: Datatable -->
             </div>
@@ -88,23 +65,18 @@
     <script>
         $(document).ready(function () {
 
-            var clas   = ".user_datatable";
-            var urll   = "{{ route('users.table') }}";
+            var clas   = ".{{ $datatable }}";
+            var urll   = "{{ route($route.'.table') }}";
             var column = [
                 { field: "no",title: "No.",width: 30,textAlign: 'center',sortable:!1},
-                { field: "name",title: "Name",filterable: true,width: 110},
-                { field: "email",title: "Email",filterable: true,width:200},
-                { field: "role",title: "Roles",filterable: true,width:200},
-                { field: "updated_at",title: "Lastupdate",filterable: true,width:200,textAlign: 'center'},
+                { field: "name",title: "Role Name",filterable: true,width: 120},
+                { field: "guard_name",title: "Guard Name",filterable: true,width:120,textAlign: 'center'},
+                { field: "updated_at",title: "Updatedat",filterable: true,width:190,textAlign: 'center'},
                 { field: "action", title: "Action",width: 100,textAlign: 'center',sortable:!1}
             ];
 
-            var cari = {generalSearch :'.generalSearch', role_name : '.role_name', role_status : '.role_status'};
+            var cari = {generalSearch :'.generalSearch'};
             global.init_datatable(clas, urll, column, cari);
-
-            $('.role_status').select2({
-                placeholder : "Select Status"
-            });
         });
     </script>
 @endsection

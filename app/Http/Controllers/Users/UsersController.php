@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
 use Vinkla\Hashids\Facades\Hashids;
+use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
 use Validator;
 use App\User;
@@ -16,6 +17,13 @@ class UsersController extends Controller
     private $titlehead = 'Page User Data';
     private $table     = 'users';
     private $route     = 'users';
+
+    function __construct(){
+        //  $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index','store']]);
+        //  $this->middleware('permission:role-create', ['only' => ['create','store']]);
+        //  $this->middleware('permission:role-edit', ['only' => ['edit','update']]);
+        //  $this->middleware('permission:role-delete', ['only' => ['destroy']]);
+    }
     
     /**
      * Display a listing of the resource.
@@ -44,7 +52,8 @@ class UsersController extends Controller
         $data['titlehead']  = $this->titlehead;
         $data['pagetitle']  = 'Tabel User';
         $data['breadcrumb'] = ['Index' => route($this->route.'.index'), 'Form Add User' => route($this->route.'.create')];
-		$data['route']      = $this->route;
+        $data['route']      = $this->route;
+        $data['roles']      = Role::pluck('name','name')->all();
 
         return view($this->route.'.create', $data);
     }
@@ -245,10 +254,17 @@ class UsersController extends Controller
         $status          = ['0' => 'Inactive', '1' => 'Active'];
 
         foreach($result as $key => $value){
+
+            $textRole = '';
+            foreach ($value->getRoleNames() as $role){
+                $textRole .= '<label for="" class="badge badge-info">'.$role.'</label>';
+            }
+    
             $data['records'][] = [
                 'no'         => $i++,
                 'name'       => $value->name,
                 'email'      => $value->email,
+                'role'       => $textRole,
                 'updated_at' => $value->updated_at,
                 'action'     => '<a href="'.route($this->route.'.edit', ['id' => Hashids::encode($value->id)] ).'" class="btn btn-primary btn-icon btn-sm ajaxify"  data-container="body" data-toggle="kt-tooltip" data-placement="bottom" title="Edit"><i class="fa fa-pen"></i></a>&nbsp
 								 <a href="'.route($this->route.'.destroy', ['id' => Hashids::encode($value->id)] ).'" class="btn btn-danger btn-icon btn-sm"  onClick="return f_status(2, this, event)" data-container="body" data-toggle="kt-tooltip" data-placement="bottom" title="Delete"><i class="fa fa-trash-alt"></i></a>&nbsp'
