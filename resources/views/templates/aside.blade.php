@@ -1,17 +1,19 @@
 <!-- Uncomment this to display the close button of the panel -->
 <?php
     function getMenu(){
-        $data = DB::table('mrt_menus')->selectRaw("menu_id AS id, menu_parent, menu_nama AS name, menu_icon AS icon, menu_link")->orderBy('menu_order', 'asc')->get();
+
+        $role_id = DB::table("model_has_roles")->select('role_id')->where('model_id', Auth::id())->get();
+        $role_id = $role_id[0]->role_id;
+        $data  = DB::table('mrt_groups')->selectRaw('menu_id AS id, menu_parent, menu_nama AS name, menu_icon AS icon, menu_link')->leftJoin('mrt_menus', 'menu_id', '=', 'group_menu_id')->where('group_role_id', $role_id)->orderBy('menu_order', 'asc')->get();
+        $parent_has_child = $data->pluck('menu_parent');
 
         $itemsByReference = array();
         /*BEGIN BUILD STRUKTUR DATA*/
         foreach($data as $key => $item) {
-        $style['style'] = $item->menu_link == '' ? '' : 'text-decoration: underline';
-        $itemsByReference[$item->id] = $item;
-        $itemsByReference[$item->id]->icon = $item->icon == '' ? '' : $item->icon;
-        $itemsByReference[$item->id]->a_attr = $style;
-        $itemsByReference[$item->id]->children = array();
-        $itemsByReference[$item->id]->data = (object)[];
+            $itemsByReference[$item->id] = $item;
+            $itemsByReference[$item->id]->icon = $item->icon == '' ? '' : $item->icon;
+            $itemsByReference[$item->id]->children = array();
+            $itemsByReference[$item->id]->data = (object)[];
         }
 
         /*END BUILD STRUKTUR DATA*/

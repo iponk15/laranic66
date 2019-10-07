@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Validator;
 use Gate;
 use DB;
+use Auth;
 
 class RoleController extends Controller
 {
@@ -82,6 +83,12 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $post      = $request->input();
+        $val_jstree = json_decode($post['val_jstree']);
+        $id_menu = array_column($val_jstree, 'id');
+        $parent_menu = array_column($val_jstree, 'parent');
+        $group_menu_id = array_unique(array_merge($id_menu, $parent_menu));
+        $groups = [];
+
         $validator = Validator::make($post, [ 'name' => 'required' ] );
 
         if ($validator->fails()) {
@@ -105,6 +112,13 @@ class RoleController extends Controller
             // insert data untuk role dan permission
             $role = Role::create( ['name' => strip_tags($request->input('name'))] );
             $role->syncPermissions($request->input('permission'));
+            foreach ($group_menu_id as $menu_id) {
+                $data['group_role_id']          = $role->id;
+                $data['group_menu_id']          = $menu_id;
+                $data['group_createdby']        = Auth::id();
+                $groups[] = $data;
+            }
+            DB::table('mrt_groups')->insert($groups);
 
             DB::commit();
 
@@ -205,6 +219,7 @@ class RoleController extends Controller
     {
         $post      = $request->input();
         $validator = Validator::make($post, [ 'name' => 'required' ] );
+        $val_jstree = $post['val_jstree'] == '' ? [] : json_decode($post['val_jstree']);
 
         if ($validator->fails()) {
           
@@ -230,6 +245,24 @@ class RoleController extends Controller
             $role->save();
 
             $role->syncPermissions($request->input('permission'));
+
+            /*BEGIN DELETE GROUP*/
+            if (!empty($val_jstree)) {                
+                $id_menu = array_column($val_jstree, 'id');
+                $parent_menu = array_column($val_jstree, 'parent');
+                $group_menu_id = array_unique(array_merge($id_menu, $parent_menu));
+                DB::table('mrt_groups')->where('group_role_id', '=', Hashids::decode($id)[0])->delete();
+
+                foreach ($group_menu_id as $menu_id) {
+                    $data['group_role_id']          = $role->id;
+                    $data['group_menu_id']          = $menu_id;
+                    $data['group_createdby']        = Auth::id();
+                    $groups[] = $data;
+                }
+                DB::table('mrt_groups')->insert($groups);
+            }
+
+            /*END DELETE GROUP*/
 
             DB::commit();
 
@@ -333,7 +366,7 @@ class RoleController extends Controller
         echo json_encode($encode);
     }
 
-    public function preview_menu(Request $request, $role_id = null)
+    public function preview_menu(Request $request)
     {
         if(isset($_GET['operation'])) {
             try {
@@ -348,10 +381,10 @@ class RoleController extends Controller
                         $data = $data->get();
 
                  
-                        if ($role_id) {
-                            $selectMenu = Mrt_roles::selectRaw('mrt_groups.*');
-                            $join          = isset($role_id) ? $selectMenu->leftjoin('mrt_groups', 'group_role_id', '=', 'role_id')->leftjoin('mrt_menus', 'menu_id', '=', 'group_menu_id') : null;
-                            $where         = isset($role_id) ? $selectMenu->where('group_role_id', Hashids::decode($role_id)[0]) : null;
+                        if (isset($_GET['node'])) {
+                            $selectMenu = Role::selectRaw('mrt_groups.*');
+                            $join          = isset($_GET['node']) ? $selectMenu->leftjoin('mrt_groups', 'group_role_id', '=', 'roles.id')->leftjoin('mrt_menus', 'menu_id', '=', 'group_menu_id') : null;
+                            $where         = isset($_GET['node']) ? $selectMenu->where('group_role_id', Hashids::decode($_GET['node'])[0]) : null;
                             $selectMenu    = $selectMenu->get();
                             $group_menu_id = $selectMenu->pluck('group_menu_id')->all();
                         }

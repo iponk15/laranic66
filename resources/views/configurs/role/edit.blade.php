@@ -17,7 +17,7 @@
         </div>
 
         <!--begin::Form-->
-        <form class="kt-form kt-form--label-right form_edit" action="{{ route($route.'.update', ['role' => $id]) }}" id="kt_form_1" method="POST" data-confirm="1">
+        <form class="kt-form kt-form--label-right form_edit" action="{{ route($route.'.update', ['role' => $id]) }}" id="kt_form_1" method="POST" data-confirm="1" onsubmit="return submitMe()">
             {{csrf_field()}}
             @method('PUT')
             <div class="kt-portlet__body">
@@ -42,42 +42,68 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <div class="col-lg-2 col-md-3 col-sm-12"></div>
-                    <div class="col-lg-8 col-md-3 col-sm-12">
-                        <div class="row">
-                            @foreach($permission as $rows)
-                                <table class="table table-sm table-bordered" style="width:15%;">
-                                    <thead>
-                                        <tr>
-                                            <th style="background-color: turquoise;">
-                                                <div class="kt-checkbox-list">
-                                                    <label class="kt-checkbox kt-checkbox--success">
-                                                    <input type="checkbox" class="checkAll" value="{{ $rows['menu_nama'] }}"> <b>{{ $rows['menu_nama'] }}</b>
-                                                        <span></span>
-                                                    </label>
+                    <label class="col-form-label col-lg-2 col-sm-12">  </label>
+                    <div class="col-lg-9 col-md-3 col-sm-12">
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr>
+                                    <th width="70%"><center><b>List Permission</b></center></th>
+                                    <th width="30%"><center><b>List Menu</b></center></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="row">
+                                            @if(empty($permission))
+                                                <div class="alert alert-danger" role="alert">
+                                                    <strong>Sorry!</strong> Permission data is empty
                                                 </div>
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($rows['list_permission'] as $params)
-                                            <tr>
-                                                <td width="20%" align="center">
-                                                    <div class="kt-checkbox-list">
-                                                        <label class="kt-checkbox kt-checkbox--success">
-                                                        <input type="checkbox" class="child-{{ $params->permin_menu_nama }}" name="permission[]" value="{{ $params->id }}" <?php echo (!empty($params->role_id) ? 'checked' : '') ?> > {{ $params->name }}
-															<span></span>
-														</label>
+                                            @else
+                                                @foreach($permission as $rows)
+                                                    <div class="col-lg-3">
+                                                        <table class="table table-sm table-bordered">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th style="background-color: lightgray;">
+                                                                        <div class="kt-checkbox-list">
+                                                                            <label class="kt-checkbox kt-checkbox--success">
+                                                                                <input type="checkbox" class="checkAll" value="{{ $rows['menu_nama'] }}"> <b>{{ $rows['menu_nama'] }}</b>
+                                                                                <span></span>
+                                                                            </label>
+                                                                        </div>
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach($rows['list_permission'] as $params)
+                                                                    <tr>
+                                                                        <td width="20%" align="center">
+                                                                            <div class="kt-checkbox-list">
+                                                                                <label class="kt-checkbox kt-checkbox--success">
+                                                                                <input type="checkbox" class="child-{{ $params->permin_menu_nama }}" name="permission[]" value="{{ $params->id }}" <?php echo (!empty($params->role_id) ? 'checked' : '') ?> > {{ $params->name }}
+                                                                                    <span></span>
+                                                                                </label>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
                                                     </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table> &nbsp;&nbsp;&nbsp;&nbsp;
-                            @endforeach
-                        </div>
+                                                @endforeach
+                                            @endif
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div id="m_tree_3" class="tree-demo"> </div>
+                                        <input type="hidden" name="val_jstree" value="" id="val_jstree">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <span class="form-text text-muted"></span>
                     </div>
-                    <div class="col-lg-2 col-md-3 col-sm-12"></div>
                 </div>
             </div>
             <div class="kt-portlet__foot">
@@ -95,7 +121,50 @@
     </div>
     <a href="{{ route($route.'.edit', ['role' => $id]) }}" class="reload ajaxify"></a>
     <script>
+        function submitMe(){
+            var result = $('#m_tree_3').jstree('get_selected', true);
+            var resultIds = [];
+            $.each(result, function() {
+                resultIds.push(
+              {
+                id: this.id,
+                parent: this.parent == '#' ? this.id : this.parent
+              }
+             )
+            });
+            $('#val_jstree').val(JSON.stringify(resultIds) == '[]' ? '' : JSON.stringify(resultIds));
+        }
         $(document).ready(function () {
+            var urljstree = "{{ route($route.'.preview_menu') }}";
+            var id = "{{$id}}";
+            $("#m_tree_3").jstree({
+                plugins: ["wholerow", "checkbox", "types"],
+                core: {
+                    themes: {
+                        responsive: !1
+                    },
+                    data : {
+                        url : urljstree+'?operation=get_node&node='+id,
+                        'data' : function (node) {
+                            return { 'id' : node.id };
+                        },
+                        "dataType" : "json"
+                    },
+                    'check_callback' : true,
+                    'themes' : {
+                        'responsive' : false
+                    }
+                },
+                types: {
+                    default: {
+                        icon: "fa fa-folder m--font-warning"
+                    },
+                    file: {
+                        icon: "fa fa-file  m--font-warning"
+                    }
+                }
+            });
+
             // function checkall checkbox permission
             $('.checkAll').on('change', function(){
                 var value = $(this).val();

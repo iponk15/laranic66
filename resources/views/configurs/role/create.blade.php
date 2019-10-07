@@ -17,7 +17,7 @@
         </div>
 
         <!--begin::Form-->
-        <form class="kt-form kt-form--label-right form_add" action="{{ route($route.'.store') }}" id="kt_form_1" method="POST">
+        <form class="kt-form kt-form--label-right form_add" action="{{ route($route.'.store') }}" id="kt_form_1" method="POST"  onsubmit="return submitMe()">
             {{csrf_field()}}
             <div class="kt-portlet__body">
                 <div class="form-group form-group-last kt-hide">
@@ -123,6 +123,19 @@
     </div>
     <a href="{{ route($route.'.create') }}" class="reload ajaxify"></a>
     <script>
+        function submitMe(){
+            var result = $('#m_tree_3').jstree('get_selected', true);
+            var resultIds = [];
+            $.each(result, function() {
+                resultIds.push(
+              {
+                id: this.id,
+                parent: this.parent == '#' ? this.id : this.parent
+              }
+             )
+            });
+            $('#val_jstree').val(JSON.stringify(resultIds) == '[]' ? '' : JSON.stringify(resultIds));
+        }
         $(document).ready(function () {
             // hirarki menu
             $("#m_tree_3").jstree({
