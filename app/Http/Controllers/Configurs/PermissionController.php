@@ -12,6 +12,7 @@ use Validator;
 use Helper;
 use Auth;
 use Gate;
+
 class PermissionController extends Controller
 {
     private $titlehead = 'Page Permission Data';

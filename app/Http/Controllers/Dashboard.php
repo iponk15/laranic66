@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Auth;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Http\Request;
+use Auth;
 
 class Dashboard extends Controller
 {
@@ -15,10 +16,13 @@ class Dashboard extends Controller
     }
 
     function index(){
-        $data['titlehead'] = 'Halaman Dashboar';
-        $data['pagetitle'] = $this->pagetitle;
+
+        $data['titlehead']  = 'Halaman Dashboar';
+        $data['pagetitle']  = $this->pagetitle;
         $data['breadcrumb'] = ['Index' => url('/')];
-        // dd(Auth::user());
+        $data['redisData']  = json_decode(Redis::get('laranic_ses'));
+
+
         return view('dashboard/index', $data);
     }
 }

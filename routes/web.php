@@ -28,9 +28,9 @@ Route::group(['middleware' => 'auth'], function(){
 	// Start route Users`
     Route::group(['as' => 'users.', 'prefix' => 'users', 'namespace' => 'Users'], function () {
         Route::post('table', ['as' => 'table', 'uses' => 'UsersController@table']);
-		Route::post('{id}/destroy', ['as' => 'destroy', 'uses' => 'UsersController@destroy']);
+		Route::post('destroy/{user_id}', ['as' => 'destroy', 'uses' => 'UsersController@destroy']);
     });
-	Route::resource('users', 'Users\UsersController');
+	Route::resource('users', 'Users\UsersController')->except(['show', 'destroy']);;
 	// End route users
 	
 	// Start route Menus`

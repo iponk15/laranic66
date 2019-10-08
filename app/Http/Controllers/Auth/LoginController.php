@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Redis;
 
 class LoginController extends Controller
 {
@@ -40,6 +41,7 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+        Redis::connect('127.0.0.1',16379);
     }
 
     public function actionlogin(Request $request)
@@ -47,7 +49,7 @@ class LoginController extends Controller
         $auth = Auth::attempt($request->only('email', 'password'));
         
         if($auth){
-            $request->session()->put( 'laranic_ses', Auth::user() );
+            Redis::set("laranic_ses", Auth::user());
             $data['status']  = 1;
         }else{
             $data['status']  = 0;
@@ -60,7 +62,8 @@ class LoginController extends Controller
 
     public function logout()
     {
-    	Auth::logout();
+        Auth::logout();
+        Redis::del('laranic_ses');
     	return redirect('/login');
     }
 }

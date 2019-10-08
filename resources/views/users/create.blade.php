@@ -50,7 +50,7 @@
                 <div class="form-group row">
                     <label class="col-form-label col-lg-2 col-sm-12">Roles <span class="kt-font-danger kt-font-bold">*</span></label>
                     <div class="col-lg-3 col-md-3 col-sm-12">
-                        <select name="" class="form-control" multiple>
+                        <select name="roles" class="form-control" multiple>
                             @foreach($roles as $rows)
                                 <option value="{{$rows}}">{{$rows}}</option>
                             @endforeach

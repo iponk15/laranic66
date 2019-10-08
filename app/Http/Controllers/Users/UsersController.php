@@ -11,6 +11,7 @@ use App\User;
 use Auth;
 use DB;
 use Gate;
+use Illuminate\Support\Facades\Redis;
 
 class UsersController extends Controller
 {
@@ -97,6 +98,7 @@ class UsersController extends Controller
         $user             = new User();
         $post['password'] = bcrypt($post['password']);
         $insert           = $user->fill($post)->save();
+        $user->assignRole($request->input('roles'));
         
         if ($insert) {
             $response['status']  = 1;
